@@ -1,0 +1,25 @@
+{
+  "name": "create-isaacs",
+  "version": "1.0.0",
+  "description": "An npm init module to create modules like I do",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap",
+    "snap": "tap",
+    "preversion": "npm test",
+    "postversion": "npm publish",
+    "postpublish": "git push origin --all; git push origin --tags"
+  },
+  "keywords": [],
+  "author": "Isaac Z. Schlueter <i@izs.me> (https://izs.me)",
+  "license": "ISC",
+  "dependencies": {
+    "read": "^1.0.7"
+  },
+  "tap": {
+    "check-coverage": true
+  },
+  "devDependencies": {
+    "tap": "^13.1.1"
+  }
+}
