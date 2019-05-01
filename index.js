@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const main = async () => {
+const main = async (readOpts) => {
 
 const tc = (fn, def) => { try { return fn() } catch (e) { return def || '' } }
 const fs = require('fs')
@@ -11,31 +11,39 @@ const pkg = tc(() => JSON.parse(fs.readFileSync('package.json')), {})
 
 const readCB = require('read')
 const read = (prompt, def) => new Promise((res, rej) =>
-  readCB({prompt, default: def}, (er, d) => er ? rej(er) : res(d)))
+  readCB({
+    prompt,
+    default: def,
+    ...(readOpts || /* istanbul ignore next */ {}),
+  }, (er, d) => /* istanbul ignore next */ er ? rej(er) : res(d)))
+
+const gitConfig = (k, v) => v ? setGitConfig(k, v) : getGitConfig(k)
 
 const setGitConfig = (k, v) =>
   sh(`git config --global --add ${JSON.stringify(k)} ${JSON.stringify(v)}`)
+
+const getGitConfig = k => sh(`git config --get-all ${k}`)
 
 const {execSync} = require('child_process')
 
 const sh = (cmd, opt) => (execSync(cmd, opt) || '').toString().trim()
 
-const gitFullname = sh('git config --get-all user.fullname')
+const gitFullname = gitConfig('user.fullname')
 const myName = gitFullname || await read('What is your full name? ')
 if (!gitFullname)
-  setGitConfig('user.fullname', myName)
+  gitConfig('user.fullname', myName)
 
-const gitEmail = sh('git config --get-all user.email')
+const gitEmail = gitConfig('user.email')
 const email = gitEmail || await read('What is your email address? ')
 if (!gitEmail)
-  setGitConfig('user.email', email)
+  gitConfig('user.email', email)
 
-const githubUser = sh('git config --get-all github.user')
+const githubUser = gitConfig('github.user')
 
-const gitWebsite = sh('git config --get-all user.website')
+const gitWebsite = gitConfig('user.website')
 const website = gitWebsite || await read('What is your website? ')
 if (!gitWebsite)
-  setGitConfig('user.website', website)
+  gitConfig('user.website', website)
 
 const author = pkg.author || `${myName} <${email}> (${website})`
 
@@ -58,19 +66,20 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
 const getRepo = () => {
-  const gconf = fs.readFileSync('.git/config', 'utf8')
-  gconf = gconf.split(/\r?\n/)
-  var i = gconf.indexOf('[remote "origin"]')
+  const gconf = fs.readFileSync('.git/config', 'utf8').split(/\r?\n/)
+  const i = gconf.indexOf('[remote "origin"]')
   if (i !== -1) {
-    var u = gconf[i + 1]
+    let u = gconf[i + 1]
     if (!u.match(/^\s*url =/)) u = gconf[i + 2]
-    if (!u.match(/^\s*url =/)) u = null
-    else u = u.replace(/^\s*url = /, '')
+    if (u.match(/^\s*url =/)) {
+      u = u.replace(/^\s*url = /, '')
+      if (u && u.match(/^git@github.com:/))
+        u = u.replace(/^git@github.com:/, 'https://github.com/')
+      return u
+    }
   }
-  if (u && u.match(/^git@github.com:/))
-    u = u.replace(/^git@github.com:/, 'https://github.com/')
 
-  return u
+  return null
 }
 
 if (!tc(() => fs.statSync('.git').isDirectory()))
@@ -112,9 +121,9 @@ const repository = gitRepo ||
   await read('git repo url: ', githubUser
     ? `https://github.com/${githubUser}/${name}` : '')
 
-const description = pkg.description ? pkg.description
-  : readme ? rmsplit[1].replace(/\n/g, ' ').trim()
-  : await read(`description of ${name}: `)
+const description = (pkg.description ? pkg.description
+  : readme ? (rmsplit[1] || '').replace(/\n/g, ' ').trim()
+  : '') || await read(`description of ${name}: `)
 
 if (!readme)
   fs.writeFileSync('README.md', `# ${name}
@@ -154,4 +163,9 @@ sh('npm install tap@latest -D', { stdio: 'inherit' })
 console.log('done!')
 
 }
-main()
+
+/* istanbul ignore next */
+if (require.main === module)
+  main()
+else
+  module.exports = main

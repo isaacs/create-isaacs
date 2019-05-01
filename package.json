@@ -21,6 +21,8 @@
     "check-coverage": true
   },
   "devDependencies": {
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.3",
     "tap": "^13.1.1"
   }
 }
