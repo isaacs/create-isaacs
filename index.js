@@ -150,7 +150,7 @@ fs.writeFileSync('package.json', JSON.stringify({
     snap: 'tap',
     preversion: 'npm test',
     postversion: 'npm publish',
-    postpublish: 'git push origin --all; git push origin --tags',
+    postpublish: 'git push origin --follow-tags',
   },
   tap: {
     ...(pkg.tap || {}),

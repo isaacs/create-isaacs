@@ -53,7 +53,7 @@ Object {
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "postpublish": "git push origin --all; git push origin --tags",
+    "postpublish": "git push origin --follow-tags",
   },
   "tap": Object {
     "check-coverage": true,
@@ -111,7 +111,7 @@ Object {
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "postpublish": "git push origin --all; git push origin --tags",
+    "postpublish": "git push origin --follow-tags",
   },
   "tap": Object {
     "check-coverage": true,
@@ -166,7 +166,7 @@ Object {
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "postpublish": "git push origin --all; git push origin --tags",
+    "postpublish": "git push origin --follow-tags",
   },
   "tap": Object {
     "check-coverage": true,
@@ -222,7 +222,7 @@ Object {
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "postpublish": "git push origin --all; git push origin --tags",
+    "postpublish": "git push origin --follow-tags",
   },
   "tap": Object {
     "check-coverage": true,
@@ -282,7 +282,7 @@ Object {
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "postpublish": "git push origin --all; git push origin --tags",
+    "postpublish": "git push origin --follow-tags",
   },
   "tap": Object {
     "check-coverage": true,
@@ -342,7 +342,7 @@ Object {
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "postpublish": "git push origin --all; git push origin --tags",
+    "postpublish": "git push origin --follow-tags",
   },
   "tap": Object {
     "check-coverage": true,
@@ -405,7 +405,7 @@ Object {
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "postpublish": "git push origin --all; git push origin --tags",
+    "postpublish": "git push origin --follow-tags",
   },
   "tap": Object {
     "check-coverage": true,
@@ -468,7 +468,7 @@ Object {
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "postpublish": "git push origin --all; git push origin --tags",
+    "postpublish": "git push origin --follow-tags",
   },
   "tap": Object {
     "check-coverage": true,
