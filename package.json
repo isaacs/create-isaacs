@@ -28,5 +28,9 @@
     "mkdirp": "^0.5.1",
     "rimraf": "^2.6.3",
     "tap": "^13.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaacs/create-isaacs.git"
   }
 }
