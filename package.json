@@ -1,7 +1,7 @@
 {
   "name": "create-isaacs",
   "bin": "index.js",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "An npm init module to create modules like I do",
   "main": "index.js",
   "scripts": {
