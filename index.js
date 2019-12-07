@@ -103,10 +103,12 @@ if (!tc(() => fs.readFileSync('.gitignore')))
 !scripts/
 !tap-snapshots/
 !test/
+!.github/
 !.travis.yml
 !.gitignore
 !.gitattributes
 !coverage-map.js
+!map.js
 !index.js
 `)
 
