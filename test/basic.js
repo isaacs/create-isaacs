@@ -190,7 +190,7 @@ t.test('pre-existing-package', async t => {
       "snap": "tap",
       "preversion": "npm test",
       "postversion": "npm publish",
-      "postpublish": "git push origin --all; git push origin --tags",
+      "prepublishOnly": "git push origin --follow-tags",
     },
     "tap": {
       "check-coverage": true,
