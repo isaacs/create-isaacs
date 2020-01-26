@@ -49,7 +49,7 @@ const author = pkg.author || `${myName} <${email}> (${website})`
 
 fs.writeFileSync('LICENSE', `The ISC License
 
-Copyright (c) ${myName} and Contributors
+Copyright (c) ${myName}
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above

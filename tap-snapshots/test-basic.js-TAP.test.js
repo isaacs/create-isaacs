@@ -21,7 +21,7 @@ Object {
 exports[`test/basic.js TAP basic > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -81,7 +81,7 @@ Object {
 exports[`test/basic.js TAP git-without-origin-0 > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -138,7 +138,7 @@ Object {
 exports[`test/basic.js TAP git-without-origin-1 > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -196,7 +196,7 @@ Object {
 exports[`test/basic.js TAP github-user-setting > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -258,7 +258,7 @@ Object {
 exports[`test/basic.js TAP pre-existing-package, has files > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -325,7 +325,7 @@ Object {
 exports[`test/basic.js TAP pre-existing-package, obj bin > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -392,7 +392,7 @@ Object {
 exports[`test/basic.js TAP pre-existing-package, string bin > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -457,7 +457,7 @@ Object {
 exports[`test/basic.js TAP saved-configs-and-readme-0 > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -525,7 +525,7 @@ Object {
 exports[`test/basic.js TAP saved-configs-and-readme-1 > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -593,7 +593,7 @@ Object {
 exports[`test/basic.js TAP saved-configs-and-readme-2 > license 1`] = `
 The ISC License
 
-Copyright (c) full-name and Contributors
+Copyright (c) full-name
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
