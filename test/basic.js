@@ -177,11 +177,14 @@ t.test('github-user-setting', async t => {
   t.matchSnapshot(gitConfig, 'git config')
 })
 
-t.test('pre-existing-package', async t => {
+t.test('pre-existing-package, obj bin', async t => {
   fs.writeFileSync('.gitignore', 'ignore some stuff')
   fs.writeFileSync('package.json', JSON.stringify({
     "name": "foo",
     "version": "0.0.0",
+    "bin": {
+      "foo": "bin/foo.js",
+    },
     "description": "describe the things",
     "author": "full-name <email@address.com> (https://my-website.com)",
     "license": "ISC",
@@ -196,6 +199,89 @@ t.test('pre-existing-package', async t => {
       "check-coverage": true,
     },
   }))
+  fs.mkdirSync('bin')
+  fs.writeFileSync('bin/foo.js', '#!/usr/bin/env node\nconsole.log("foo")')
+  fs.writeFileSync('index.js', 'console.log("hello")')
+  fs.writeFileSync('README.md', `# foo`)
+  fs.mkdirSync('.git')
+  input.write('\n')
+  await create({ input, output })
+  t.same(logs, ['done!'])
+  logs.length = 0
+  t.matchSnapshot(output.read(), 'output')
+  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+  t.matchSnapshot(pkg, 'package.json')
+  t.matchSnapshot(fs.readFileSync('.git/description'), 'description')
+  t.matchSnapshot(fs.readFileSync('README.md', 'utf8'), 'readme')
+  t.matchSnapshot(fs.readFileSync('LICENSE', 'utf8'), 'license')
+  t.matchSnapshot(gitConfig, 'git config')
+})
+
+t.test('pre-existing-package, string bin', async t => {
+  fs.writeFileSync('.gitignore', 'ignore some stuff')
+  fs.writeFileSync('package.json', JSON.stringify({
+    "name": "foo",
+    "version": "0.0.0",
+    "bin": "bin/foo.js",
+    "description": "describe the things",
+    "author": "full-name <email@address.com> (https://my-website.com)",
+    "license": "ISC",
+    "scripts": {
+      "test": "tap",
+      "snap": "tap",
+      "preversion": "npm test",
+      "postversion": "npm publish",
+      "prepublishOnly": "git push origin --follow-tags",
+    },
+    "tap": {
+      "check-coverage": true,
+    },
+  }))
+  fs.mkdirSync('bin')
+  fs.writeFileSync('bin/foo.js', '#!/usr/bin/env node\nconsole.log("foo")')
+  fs.writeFileSync('index.js', 'console.log("hello")')
+  fs.writeFileSync('README.md', `# foo`)
+  fs.mkdirSync('.git')
+  input.write('\n')
+  await create({ input, output })
+  t.same(logs, ['done!'])
+  logs.length = 0
+  t.matchSnapshot(output.read(), 'output')
+  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+  t.matchSnapshot(pkg, 'package.json')
+  t.matchSnapshot(fs.readFileSync('.git/description'), 'description')
+  t.matchSnapshot(fs.readFileSync('README.md', 'utf8'), 'readme')
+  t.matchSnapshot(fs.readFileSync('LICENSE', 'utf8'), 'license')
+  t.matchSnapshot(gitConfig, 'git config')
+})
+
+t.test('pre-existing-package, has files', async t => {
+  fs.writeFileSync('.gitignore', 'ignore some stuff')
+  fs.writeFileSync('package.json', JSON.stringify({
+    "name": "foo",
+    "version": "0.0.0",
+    "bin": "bin/foo.js",
+    "description": "describe the things",
+    "author": "full-name <email@address.com> (https://my-website.com)",
+    "license": "ISC",
+    files: [
+      'bin/foo.js',
+      'doesnt-exist',
+      'index.js',
+    ],
+    "scripts": {
+      "test": "tap",
+      "snap": "tap",
+      "preversion": "npm test",
+      "postversion": "npm publish",
+      "prepublishOnly": "git push origin --follow-tags",
+    },
+    "tap": {
+      "check-coverage": true,
+    },
+  }))
+  fs.mkdirSync('bin')
+  fs.writeFileSync('bin/foo.js', '#!/usr/bin/env node\nconsole.log("foo")')
   fs.writeFileSync('index.js', 'console.log("hello")')
   fs.writeFileSync('README.md', `# foo`)
   fs.mkdirSync('.git')

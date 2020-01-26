@@ -1,7 +1,10 @@
 {
   "name": "create-isaacs",
-  "bin": "index.js",
   "version": "1.2.1",
+  "files": [
+    "index.js"
+  ],
+  "bin": "index.js",
   "description": "An npm init module to create modules like I do",
   "main": "index.js",
   "scripts": {
@@ -27,10 +30,10 @@
   "devDependencies": {
     "mkdirp": "^0.5.1",
     "rimraf": "^2.6.3",
-    "tap": "^13.1.1"
+    "tap": "^14.10.6"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/isaacs/create-isaacs.git"
+    "url": "git+https://github.com/isaacs/create-isaacs"
   }
 }

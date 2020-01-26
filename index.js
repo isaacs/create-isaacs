@@ -74,8 +74,8 @@ const getRepo = () => {
     if (u.match(/^\s*url =/)) {
       u = u.replace(/^\s*url = /, '')
       if (u && u.match(/^git@github.com:/))
-        u = u.replace(/^git@github.com:/, 'https://github.com/')
-      return u
+        u = u.replace(/^git@github.com:/, 'git+https://github.com/')
+      return { type: 'git', url: u }
     }
   }
 
@@ -139,9 +139,34 @@ if (description)
 if (!tc(() => fs.readFileSync('index.js')))
   fs.writeFileSync('index.js', '// put javascript in here')
 
+const files = new Set([])
+const addFileIfExists = p => {
+  try {
+    if (p && typeof p === 'string' && fs.statSync(p).isDirectory())
+      files.add(p)
+  } finally {
+    return
+  }
+}
+for (const f of pkg.files || []) {
+  addFileIfExists(f)
+}
+addFileIfExists('index.js')
+addFileIfExists('bin/')
+addFileIfExists('lib/')
+addFileIfExists(pkg.main)
+if (typeof pkg.bin === 'string')
+  addFileIfExists(pkg.bin)
+else if (pkg.bin && typeof pkg.bin === 'object') {
+  for (const [name, p] of Object.entries(pkg.bin)) {
+    addFileIfExists(p)
+  }
+}
+
 fs.writeFileSync('package.json', JSON.stringify({
   name,
   version: '0.0.0',
+  files: [...files],
   ...pkg,
   description,
   repository,
