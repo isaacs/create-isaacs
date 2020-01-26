@@ -46,6 +46,7 @@ Object {
   "name": "tmp-test-basic",
   "version": "0.0.0",
   "description": "description",
+  "repository": "https://github.com/basic/bar",
   "author": "full-name <email@address.com> (https://my-website.com)",
   "license": "ISC",
   "scripts": Object {
@@ -104,6 +105,7 @@ Object {
   "name": "foo",
   "version": "0.0.0",
   "description": "",
+  "repository": "https://github.com/git-without-origin/bar",
   "author": "full-name <email@address.com> (https://my-website.com)",
   "license": "ISC",
   "scripts": Object {
@@ -159,6 +161,7 @@ Object {
   "name": "foo",
   "version": "0.0.0",
   "description": "",
+  "repository": "https://github.com/git-without-origin/bar",
   "author": "full-name <email@address.com> (https://my-website.com)",
   "license": "ISC",
   "scripts": Object {
@@ -215,6 +218,7 @@ Object {
   "name": "foo",
   "version": "0.0.0",
   "description": "",
+  "repository": "https://github.com/github-user-setting/bar",
   "author": "full-name <email@address.com> (https://my-website.com)",
   "license": "ISC",
   "scripts": Object {
@@ -287,6 +291,7 @@ Object {
   "tap": Object {
     "check-coverage": true,
   },
+  "repository": "https://github.com/foo/foo",
 }
 `
 
@@ -335,6 +340,7 @@ Object {
   "name": "foo",
   "version": "0.0.0",
   "description": "description",
+  "repository": "https://github.com/oc-0/bar",
   "author": "full-name <email@address.com> (https://my-website.com)",
   "license": "ISC",
   "scripts": Object {
@@ -398,6 +404,7 @@ Object {
   "name": "foo",
   "version": "0.0.0",
   "description": "description",
+  "repository": "https://github.com/oc-1/bar",
   "author": "full-name <email@address.com> (https://my-website.com)",
   "license": "ISC",
   "scripts": Object {
@@ -461,6 +468,7 @@ Object {
   "name": "foo",
   "version": "0.0.0",
   "description": "description",
+  "repository": "git://some-other-place/blerg.git",
   "author": "full-name <email@address.com> (https://my-website.com)",
   "license": "ISC",
   "scripts": Object {

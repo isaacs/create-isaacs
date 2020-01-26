@@ -144,6 +144,7 @@ fs.writeFileSync('package.json', JSON.stringify({
   version: '0.0.0',
   ...pkg,
   description,
+  repository,
   author,
   license: 'ISC',
   scripts: {
