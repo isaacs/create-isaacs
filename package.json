@@ -26,9 +26,6 @@
     "mkdirp": "^1.0.4",
     "read": "^1.0.7"
   },
-  "tap": {
-    "check-coverage": true
-  },
   "devDependencies": {
     "rimraf": "^2.6.3",
     "tap": "^15.1.6"

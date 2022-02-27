@@ -158,7 +158,7 @@ const addFileIfExists = p => {
 for (const f of pkg.files || []) {
   addFileIfExists(f)
 }
-addFileIfExists('index.js')
+addFileIfExists(pkg.main || 'index.js')
 addFileIfExists('bin/')
 addFileIfExists('lib/')
 addFileIfExists(pkg.main)
@@ -187,10 +187,6 @@ fs.writeFileSync('package.json', JSON.stringify({
     postversion: 'npm publish',
     prepublishOnly: 'git push origin --follow-tags',
   },
-  tap: {
-    ...(pkg.tap || {}),
-    'check-coverage': true,
-  }
 }, null, 2))
 
 const findFiles = (path, acc = []) => {

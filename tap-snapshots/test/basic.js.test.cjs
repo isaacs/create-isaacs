@@ -56,9 +56,6 @@ Object {
     "snap": "tap",
     "test": "tap",
   },
-  "tap": Object {
-    "check-coverage": true,
-  },
   "version": "0.0.0",
 }
 `
@@ -116,9 +113,6 @@ Object {
     "snap": "tap",
     "test": "tap",
   },
-  "tap": Object {
-    "check-coverage": true,
-  },
   "version": "0.0.0",
 }
 `
@@ -172,9 +166,6 @@ Object {
     "preversion": "npm test",
     "snap": "tap",
     "test": "tap",
-  },
-  "tap": Object {
-    "check-coverage": true,
   },
   "version": "0.0.0",
 }
@@ -230,9 +221,6 @@ Object {
     "preversion": "npm test",
     "snap": "tap",
     "test": "tap",
-  },
-  "tap": Object {
-    "check-coverage": true,
   },
   "version": "0.0.0",
 }
@@ -495,9 +483,6 @@ Object {
     "snap": "tap",
     "test": "tap",
   },
-  "tap": Object {
-    "check-coverage": true,
-  },
   "version": "0.0.0",
 }
 `
@@ -563,9 +548,6 @@ Object {
     "snap": "tap",
     "test": "tap",
   },
-  "tap": Object {
-    "check-coverage": true,
-  },
   "version": "0.0.0",
 }
 `
@@ -630,9 +612,6 @@ Object {
     "preversion": "npm test",
     "snap": "tap",
     "test": "tap",
-  },
-  "tap": Object {
-    "check-coverage": true,
   },
   "version": "0.0.0",
 }
