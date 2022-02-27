@@ -52,7 +52,7 @@ const author = pkg.author || `${myName} <${email}> (${website})`
 if (!fs.readdirSync('.').filter(f => /^LICENSE(\..*)$/.test(f)).length) {
   fs.writeFileSync('LICENSE', `The ISC License
 
-Copyright (c) ${myName}
+Copyright (c) ${myName} and Contributors
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
