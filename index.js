@@ -2,9 +2,10 @@
 
 const main = async (readOpts) => {
 
+const mkdirp = require('mkdirp')
 const tc = (fn, def) => { try { return fn() } catch (e) { return def || '' } }
 const fs = require('fs')
-const path = require('path')
+const {dirname, basename, relative, resolve} = require('path')
 const cwd = process.cwd()
 
 const pkg = tc(() => JSON.parse(fs.readFileSync('package.json')), {})
@@ -47,7 +48,9 @@ if (!gitWebsite)
 
 const author = pkg.author || `${myName} <${email}> (${website})`
 
-fs.writeFileSync('LICENSE', `The ISC License
+/* istanbul ignore else */
+if (!fs.readdirSync('.').filter(f => /^LICENSE(\..*)$/.test(f)).length) {
+  fs.writeFileSync('LICENSE', `The ISC License
 
 Copyright (c) ${myName}
 
@@ -63,7 +66,7 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
 IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 `)
-
+}
 
 const getRepo = () => {
   const gconf = fs.readFileSync('.git/config', 'utf8').split(/\r?\n/)
@@ -85,38 +88,42 @@ const getRepo = () => {
 if (!tc(() => fs.statSync('.git').isDirectory()))
   sh('git init')
 
-if (!tc(() => fs.readFileSync('.gitignore')))
+if (!tc(() => fs.readFileSync('.gitignore'))) {
+  const m = pkg.main || 'index.js'
   fs.writeFileSync('.gitignore', `# ignore most things, include some others
 /*
 /.*
 
-!bin/
-!lib/
-!docs/
-!package.json
-!package-lock.json
-!README.md
-!CONTRIBUTING.md
-!LICENSE
-!CHANGELOG.md
-!example/
-!scripts/
-!tap-snapshots/
-!test/
-!.github/
-!.travis.yml
-!.gitignore
-!.gitattributes
-!coverage-map.js
-!map.js
-!index.js
+!/bin
+!/lib
+!/doc{s,}
+!/package.json
+!/package-lock.json
+!/README.md
+!/CONTRIBUTING.md
+!/LICENSE
+!/LICENSE.*
+!/CHANGELOG.md
+!/example{,s}
+!/scripts
+!/tap-snapshots
+!/test
+!/.github
+!/.travis.yml
+!/.gitignore
+!/.gitattributes
+!/coverage-map.js
+!/map.js
+!/index.js
+!/${m}
 `)
+}
 
 const readme = tc(() => fs.readFileSync('README.md', 'utf8'), '')
 const rmsplit = readme.split(/\n\n+/)
 const name = pkg.name ? pkg.name
   : readme ? rmsplit[0].replace(/^\s*#+/, '').trim()
-  : path.basename(cwd)
+  : basename(cwd)
 
 const gitRepo = tc(getRepo, '')
 const repository = gitRepo ||
@@ -185,6 +192,22 @@ fs.writeFileSync('package.json', JSON.stringify({
     'check-coverage': true,
   }
 }, null, 2))
+
+const findFiles = (path, acc = []) => {
+  for (const entry of fs.readdirSync(path, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      findFiles(`${path}/${entry.name}`, acc)
+    } else /* istanbul ignore else */ if (entry.isFile()) {
+      acc.push(`${path}/${entry.name}`)
+    }
+  }
+  return acc
+}
+for (const dotGH of findFiles(__dirname + '/dot-github')) {
+  const to = resolve('.github', relative(__dirname + '/dot-github', dotGH))
+  mkdirp.sync(dirname(to))
+  fs.writeFileSync(to, fs.readFileSync(dotGH))
+}
 
 sh('npm install tap@latest -D', { stdio: 'inherit' })
 

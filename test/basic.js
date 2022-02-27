@@ -34,19 +34,17 @@ console.log = msg => logs.push(msg)
 
 const create = require('../')
 
-t.beforeEach((cb, t) => {
+t.beforeEach(t => {
   t.context.dir = `tmp-test-${t.name}`
   rimraf(t.context.dir)
   mkdirp(t.context.dir)
   process.chdir(t.context.dir)
-  cb()
 })
 
-t.afterEach((cb, t) => {
+t.afterEach(t => {
   process.chdir(cwd)
   input.read()
   rimraf(t.context.dir)
-  cb()
 })
 
 t.test('basic', async t => {
