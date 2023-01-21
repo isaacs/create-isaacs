@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "type": "module",
   "files": [
+    "templates",
     "dot-github",
     "bin.js",
     "scripts",
