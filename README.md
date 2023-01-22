@@ -2,6 +2,25 @@
 
 An npm init module to create modules like I do.
 
+```sh
+$ npm init isaacs [module-name] [flags...]
+```
+
+## Flags
+
+- `-y` `--yes` Accept defaults from all prompts.  (Note that
+  defaults are not provided for certain git configs, so it'll
+  still prompt for those.  There is no guaranteed-headless mode,
+  this is just a convenience to not have to mash the enter key so
+  much.)
+- `-a` `--always-yes` Accept defaults now, and all future runs,
+  until run with `--no`, which unsets it.
+- `-n` `--no` Do not accept defaults.  (This takes precedence
+  over `--yes` and unsets the `--always-yes` flag, even if it was
+  set on this run.)
+
+## What It Do
+
 This creates a hybrid TypeScript module, with tests set up to
 work using [tap](https://node-tap.org/).
 

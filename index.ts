@@ -39,8 +39,12 @@ const template = (path: string, data: { [k: string]: string } = {}) => {
   })
 }
 
-const read = (prompt: string, def?: string, opts?: Read.Options) =>
-  new Promise<string>((res, rej) =>
+const read = async (prompt: string, def?: string, opts?: Read.Options) => {
+  if (acceptDefaults && def !== undefined) {
+    console.log(`${prompt} (${def})`)
+    return def
+  }
+  return new Promise<string>((res, rej) =>
     readCB(
       {
         prompt,
@@ -52,6 +56,7 @@ const read = (prompt: string, def?: string, opts?: Read.Options) =>
       /* c8 ignore stop */
     )
   )
+}
 
 let aliveNodeVersions: string[] | undefined = undefined
 const getNodeVersions = async () => {
@@ -129,8 +134,13 @@ const setGitConfig = (k: string, v: string) =>
       k
     )} ${JSON.stringify(v)}`
   )
-const getGitConfig = (k: string): string =>
-  sh(`git config --get-all ${k}`).trim().split(/\n/)[0].trim()
+const getGitConfig = (k: string): string => {
+  try {
+    return sh(`git config --get-all ${k}`).trim().split(/\n/)[0].trim()
+  } catch (_) {
+    return ''
+  }
+}
 
 const sh = (cmd: string, opt?: ExecSyncOptions): string =>
   (execSync(cmd, opt) || '').toString().trim()
@@ -313,7 +323,7 @@ const getDesc = async () => {
   const desc = (
     (readme ? (getRmSplit()[1] || '').replace(/\n/g, ' ').trim() : '') ||
     (fromGit && !/^Unnamed repository/.test(fromGit) ? fromGit : '') ||
-    (await read(`description: `))
+    (await read(`description: `, ''))
   ).trim()
 
   if (desc && desc !== fromGit) {
@@ -496,8 +506,29 @@ const makeProjectDir = async (arg?: string) => {
   return false
 }
 
-const main = async (name?: string) => {
-  const made = await makeProjectDir(name)
+let acceptDefaults = gitConfig('npm-init-isaacs.always-yes') === 'true'
+const main = async (args: string[]) => {
+  let positional: string[] = []
+  let flags: string[] = []
+  for (const a of args) {
+    if (a.startsWith('-')) {
+      flags.push(a)
+    } else {
+      positional.push(a)
+    }
+  }
+  if (flags.includes('-y') || flags.includes('--yes')) {
+    acceptDefaults = true
+  }
+  if (flags.includes('-a') || flags.includes('--always-yes')) {
+    acceptDefaults = true
+    gitConfig('npm-init-isaacs.always-yes', 'true')
+  }
+  if (flags.includes('-n') || flags.includes('--no')) {
+    acceptDefaults = false
+    gitConfig('npm-init-isaacs.always-yes', 'false')
+  }
+  const made = await makeProjectDir(positional[0])
   await writeAll()
   console.log('done!\n')
   if (made) {
@@ -506,4 +537,4 @@ const main = async (name?: string) => {
   console.log('Files added to git, but not yet committed.')
 }
 
-main(process.argv[2])
+main(process.argv.slice(2))
