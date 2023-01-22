@@ -472,9 +472,9 @@ const writeAll = async () => {
   await gitAddPkg()
 }
 
-const makeProjectDir = async () => {
-  if (!tc(() => statSync('.git') && true, false)) {
-    name = await read('module name? ', undefined)
+const makeProjectDir = async (arg?: string) => {
+  if (arg || !tc(() => statSync('.git') && true, false)) {
+    name = await read('module name? ', arg)
     if (!name) {
       console.error('aborted')
       process.exit(1)
@@ -496,8 +496,8 @@ const makeProjectDir = async () => {
   return false
 }
 
-const main = async () => {
-  const made = await makeProjectDir()
+const main = async (name?: string) => {
+  const made = await makeProjectDir(name)
   await writeAll()
   console.log('done!\n')
   if (made) {
@@ -506,4 +506,4 @@ const main = async () => {
   console.log('Files added to git, but not yet committed.')
 }
 
-main()
+main(process.argv[2])
