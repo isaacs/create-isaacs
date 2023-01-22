@@ -68,7 +68,10 @@ const getNodeVersions = async () => {
   return (aliveNodeVersions = Object.keys(versions)
     .filter((v: string) => {
       const end = versions[v].end
-      return !end || new Date(end) > now
+      const start = versions[v].start
+      return (
+        (!end || new Date(end) > now) && (!start || new Date(start) < now)
+      )
     })
     .sort((a: string, b: string) =>
       versions[a].start.localeCompare(versions[b].start, 'en')
