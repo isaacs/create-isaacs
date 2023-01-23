@@ -3,7 +3,7 @@
 An npm init module to create modules like I do.
 
 ```sh
-$ npm init isaacs [module-name] [flags...]
+$ npm init isaacs [module-name] -- [flags...]
 ```
 
 ## Flags
