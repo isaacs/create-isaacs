@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 16.x
       - name: put repo in package.json
-        run: node .github/workflows/package-json-repo.js
+        run: node .github/workflows/package-json-repo.cjs
       - name: check in package.json if modified
         run: |
           bash -x .github/workflows/commit-if-modified.sh \
