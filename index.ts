@@ -277,6 +277,12 @@ const getDefaultExport = async () => {
   if (hasDefaultExport !== undefined) {
     return hasDefaultExport
   }
+  const fromGit = gitConfig('npm-init-isaacs.always-default-export')
+  if (fromGit === 'true') {
+    return (hasDefaultExport = true)
+  } else if (fromGit === 'false') {
+    return (hasDefaultExport = true)
+  }
   const def = await read('set default export? ', 'yes')
   hasDefaultExport = def.charAt(0).toLowerCase() === 'y'
   return hasDefaultExport
@@ -284,6 +290,12 @@ const getDefaultExport = async () => {
 
 let hasBin: boolean | undefined = undefined
 const getBin = async () => {
+  const fromGit = gitConfig('npm-init-isaacs.always-bin')
+  if (fromGit === 'true') {
+    return (hasBin = true)
+  } else if (fromGit === 'false') {
+    return (hasBin = false)
+  }
   if (hasBin === undefined) {
     const cur = !!getExistingPkg({ bin: undefined }).bin
     const bin = await read('bin script? ', cur ? 'yes' : 'no')
@@ -311,7 +323,11 @@ const getName = async () => {
   return (name = rname || basename(process.cwd()))
 }
 
+let descriptionArg: string | undefined = undefined
 const getDesc = async () => {
+  if (descriptionArg !== undefined) {
+    return descriptionArg
+  }
   const pdesc = getExistingPkg({ description: '' }).description
   if (pdesc) {
     return pdesc
@@ -349,20 +365,8 @@ const getExistingPkg = (def: { [k: string]: any }) => {
 
 const getVersion = () => getExistingPkg({ version: '0.0.0-0' }).version
 
-const getPkg = async () => ({
-  name: await getName(),
-  version: getVersion(),
-  description: await getDesc(),
-  author: await getAuthor(),
-
-  // add a bin pointing to ./dist/cjs/bin.js if we have one of those.
-  // add 'src' if the build ends up including package.json.
-  bin: await getBin(),
-  main: (await getDefaultExport())
-    ? './dist/cjs/index-cjs.js'
-    : './dist/cjs/index.js',
-  module: './dist/mjs/index.js',
-  exports: {
+const getExports = async () => {
+  return {
     '.': {
       // default has to come last, for webkit
       import: {
@@ -379,39 +383,64 @@ const getPkg = async () => ({
             default: './dist/cjs/index.js',
           },
     },
-  },
+  }
+}
+
+const getScripts = () => ({
+  preversion: 'npm test',
+  postversion: 'npm publish',
+  prepublishOnly: 'git push origin --follow-tags',
+  preprepare: 'rm -rf dist',
+  prepare: 'tsc -p tsconfig.json && tsc -p tsconfig-esm.json',
+  postprepare: 'bash ./scripts/fixup.sh',
+  pretest: 'npm run prepare',
+  presnap: 'npm run prepare',
+  test: 'c8 tap',
+  snap: 'c8 tap',
+  format: 'prettier --write . --loglevel warn',
+  typedoc: 'typedoc --tsconfig tsconfig-esm.json ./src/*.ts',
+})
+
+const getPrettier = () => ({
+  semi: false,
+  printWidth: 75,
+  tabWidth: 2,
+  useTabs: false,
+  singleQuote: true,
+  jsxSingleQuote: false,
+  bracketSameLine: true,
+  arrowParens: 'avoid',
+  endOfLine: 'lf',
+})
+
+const getTap = () => ({
+  coverage: false,
+  'node-arg': ['--no-warnings', '--loader', 'ts-node/esm'],
+  ts: false,
+})
+
+const getMain = async () =>
+  (await getDefaultExport())
+    ? './dist/cjs/index-cjs.js'
+    : './dist/cjs/index.js'
+
+const getPkg = async () => ({
+  name: await getName(),
+  version: getVersion(),
+  description: await getDesc(),
+  author: await getAuthor(),
+
+  // add a bin pointing to ./dist/cjs/bin.js if we have one of those.
+  // add 'src' if the build ends up including package.json.
+  bin: await getBin(),
+  main: await getMain(),
+  module: './dist/mjs/index.js',
+  exports: await getExports(),
   files: ['dist'],
   license: 'BlueOak-1.0.0',
-  scripts: {
-    preversion: 'npm test',
-    postversion: 'npm publish',
-    prepublishOnly: 'git push origin --follow-tags',
-    preprepare: 'rm -rf dist',
-    prepare: 'tsc -p tsconfig.json && tsc -p tsconfig-esm.json',
-    postprepare: 'bash ./scripts/fixup.sh',
-    pretest: 'npm run prepare',
-    presnap: 'npm run prepare',
-    test: 'c8 tap',
-    snap: 'c8 tap',
-    format: 'prettier --write . --loglevel warn',
-    typedoc: 'typedoc --tsconfig tsconfig-esm.json ./src/*.ts',
-  },
-  prettier: {
-    semi: false,
-    printWidth: 75,
-    tabWidth: 2,
-    useTabs: false,
-    singleQuote: true,
-    jsxSingleQuote: false,
-    bracketSameLine: true,
-    arrowParens: 'avoid',
-    endOfLine: 'lf',
-  },
-  tap: {
-    coverage: false,
-    'node-arg': ['--no-warnings', '--loader', 'ts-node/esm'],
-    ts: false,
-  },
+  scripts: getScripts(),
+  prettier: getPrettier(),
+  tap: getTap(),
   dependencies: getExistingPkg({ dependencies: undefined }).dependencies,
   devDependencies: {},
   engines: await getEngines(),
@@ -451,22 +480,18 @@ const writeTSConfig = async () => {
 
 const writeDotGitHub = async () => {
   const gitHubUser = (await getGitUser()).github
-
   template('.github/FUNDING.yml', { gitHubUser })
-
   const n = await getNodeVersions()
   const node_versions = n.map(v => `${v}.x`).join(', ')
-
   const workflows = readdirSync(resolve(templateDir, '.github/workflows'))
   for (const wf of workflows) {
     const wfp = '.github/workflows/' + wf
     template(wfp, { node_versions })
   }
 }
+
 const writePrettierIgnore = async () => template('.prettierignore')
-
 const gitAddPkg = async () => sh('git add package*.json')
-
 const writeAll = async () => {
   await writeReadme()
   await writeLicense()
@@ -482,9 +507,10 @@ const writeAll = async () => {
   await gitAddPkg()
 }
 
-const makeProjectDir = async (arg?: string) => {
-  if (arg || !tc(() => statSync('.git') && true, false)) {
-    name = await read('module name? ', arg)
+const makeProjectDir = async (nameArg?: string, descArg?: string) => {
+  descriptionArg = descArg
+  if (nameArg || !tc(() => statSync('.git') && true, false)) {
+    name = await read('module name? ', nameArg)
     if (!name) {
       console.error('aborted')
       process.exit(1)
@@ -506,29 +532,105 @@ const makeProjectDir = async (arg?: string) => {
   return false
 }
 
-let acceptDefaults = gitConfig('npm-init-isaacs.always-yes') === 'true'
-const main = async (args: string[]) => {
-  let positional: string[] = []
-  let flags: string[] = []
+const gitConfigFlag = (
+  key: string,
+  value: boolean,
+  always: boolean = false
+): boolean => {
+  const k = `npm-init-isaacs.${key}`
+  const fromGit = gitConfig(k)
+  if (value && fromGit === 'false') {
+    gitConfig(k, always ? 'false' : '')
+  } else if (!value && fromGit === 'true') {
+    gitConfig(k, always ? 'true' : '')
+  } else if (always) {
+    gitConfig(k, value ? 'true' : 'false')
+  }
+  return value
+}
+
+const parseFlag = (
+  short: string,
+  long: string,
+  key: string,
+  flag: string
+): boolean | void => {
+  const shortYes = short.toLowerCase()
+  const shortNo = short.toUpperCase()
+  const shortAlways = shortYes + shortYes
+  const shortNever = shortNo + shortNo
+  const longYes = long.toLowerCase()
+  const longNo = `no-${longYes}`
+  const longAlways = `always-${longYes}`
+  const longNever = `never-${longYes}`
+
+  switch (flag) {
+    case `-${shortYes}`:
+    case `--${longYes}`:
+      return gitConfigFlag(key, true, false)
+    case `-${shortNo}`:
+    case `--${longNo}`:
+      return gitConfigFlag(key, false, false)
+    case `-${shortAlways}`:
+    case `--${longAlways}`:
+      return gitConfigFlag(key, true, true)
+    case `-${shortNever}`:
+    case `--${longNever}`:
+      return gitConfigFlag(key, false, true)
+    default:
+      return
+  }
+}
+
+// this one is a little pecial
+const parseYesFlag = (flag: string): boolean | void => {
+  if (flag === '-y' || flag === '--yes') {
+    return gitConfigFlag('always-yes', true)
+  } else if (flag === '-a' || flag === '--always-yes') {
+    return gitConfigFlag('always-yes', true, true)
+  } else if (flag === '-n' || flag === '--no') {
+    return gitConfigFlag('always-yes', false)
+  }
+}
+
+const parseArgs = (args: string[]): string[] => {
+  const positional: string[] = []
   for (const a of args) {
     if (a.startsWith('-')) {
-      flags.push(a)
+      let p: boolean | void
+      if ((p = parseYesFlag(a)) !== undefined) {
+        acceptDefaults = p
+        continue
+      }
+      if ((p = parseFlag('b', 'bin', 'always-bin', a)) !== undefined) {
+        hasBin = p
+        continue
+      }
+      if (
+        (p = parseFlag(
+          'e',
+          'default-export',
+          'always-default-export',
+          a
+        )) !== undefined
+      ) {
+        hasDefaultExport = p
+        continue
+      }
     } else {
       positional.push(a)
     }
   }
-  if (flags.includes('-y') || flags.includes('--yes')) {
-    acceptDefaults = true
-  }
-  if (flags.includes('-a') || flags.includes('--always-yes')) {
-    acceptDefaults = true
-    gitConfig('npm-init-isaacs.always-yes', 'true')
-  }
-  if (flags.includes('-n') || flags.includes('--no')) {
-    acceptDefaults = false
-    gitConfig('npm-init-isaacs.always-yes', 'false')
-  }
-  const made = await makeProjectDir(positional[0])
+
+  return positional
+}
+
+let acceptDefaults = gitConfig('npm-init-isaacs.always-yes') === 'true'
+const main = async (args: string[]) => {
+  const positional = parseArgs(args)
+
+  const [moduleName, description] = positional
+  const made = await makeProjectDir(moduleName, description)
   await writeAll()
   console.log('done!\n')
   if (made) {
